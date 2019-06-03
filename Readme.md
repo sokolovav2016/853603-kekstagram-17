@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Алексей Соколов](https://up.htmlacademy.ru/javascript/17/user/853603).
-* Наставник: `Неизвестно`.
+* Наставник: [Александр  Сушко](https://htmlacademy.ru/profile/sashasushko).
 
 ---
 
