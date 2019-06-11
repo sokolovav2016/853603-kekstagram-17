@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 var MIN_LIKES = 15;
 var MAX_LIKES = 200;
