@@ -1,3 +1,5 @@
+'use strict'
+
 var MIN_LIKES = 15;
 var MAX_LIKES = 200;
 var NUMBER_OF_PHOTOS = 25;
@@ -55,28 +57,27 @@ function getRandomSentence(maxSentences, arrSentences) { // Произвольн
   return sentence;
 }
 
+function getRandomArrComments() { // Произвольный массив комментариев
+  var arrComments = [];
+  var maxComments = getRandomInteger(NUMBER_OF_AVATARS);
+
+  for (var i = 1; i <= maxComments; i++) {
+    var randomAvatar = getRandomInteger(NUMBER_OF_AVATARS);
+
+    arrComments.push({
+      avatar: 'img/avatar-' + randomAvatar + '.svg',
+      message: getRandomSentence(MAX_SENTENCES, SENTENCES),
+      name: getRandomElementArr(AUTOR_NAMES)
+    });
+  }
+
+  return arrComments;
+}
+
 function getDescriptionPhotos(numberOfPhotos) {
   var arr = [];
 
   for (var i = 1; i <= numberOfPhotos; i++) {
-
-    function getRandomArrComments() { // Произвольный массив комментариев
-      var arrComments = [];
-      var maxComments = getRandomInteger(NUMBER_OF_AVATARS);
-
-      for (var i = 1; i <= maxComments; i++) {
-        var randomAvatar = getRandomInteger(NUMBER_OF_AVATARS);
-
-        arrComments.push({
-          avatar: 'img/avatar-' + randomAvatar + '.svg',
-          message: getRandomSentence(MAX_SENTENCES, SENTENCES),
-          name: getRandomElementArr(AUTOR_NAMES)
-        });
-      }
-
-      return arrComments;
-    }
-
     arr.push({
       url: 'photos/' + i + '.jpg',
       likes: getRandomIntegerInRange(MIN_LIKES, MAX_LIKES),
