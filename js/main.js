@@ -32,8 +32,9 @@ function getRandomIntegerInRange(min, max) { // Произвольное чис�
   return Math.floor(min + Math.random() * (max + 1 - min));
 }
 
-function getRandomElementArr(arr) { // Произвольный элемент массива
-  return arr[Math.floor(Math.random() * arr.length)];
+function getRandomArrayElement(arr) {
+  var index = getRandomIntegerInRange(0, arr.length - 1);
+  return arr[index];
 }
 
 function getRandomSentence(maxSentences, arrSentences) { // Произвольное предложение в комментарии
@@ -41,7 +42,7 @@ function getRandomSentence(maxSentences, arrSentences) { // Произвольн
   var max = getRandomIntegerInRange(1, maxSentences);
 
   for (i = 1; i <= max; i++) {
-    sentence += getRandomElementArr(arrSentences);
+    sentence += getRandomArrayElement(arrSentences);
     if (i < max) {
       sentence += ' ';
     }
@@ -60,7 +61,7 @@ function getRandomComments() { // Произвольный массив комм
     arrComments.push({
       avatar: 'img/avatar-' + randomAvatar + '.svg',
       message: getRandomSentence(MAX_SENTENCES_IN_COMMENT, COMMENTS),
-      name: getRandomElementArr(AUTHOR_NAMES)
+      name: getRandomArrayElement(AUTHOR_NAMES)
     });
   }
 
