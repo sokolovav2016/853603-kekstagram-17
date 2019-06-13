@@ -2,8 +2,8 @@
 
 var MIN_LIKES = 15;
 var MAX_LIKES = 200;
-var NUMBER_OF_PHOTOS = 25;
-var SENTENCES = [
+var PHOTO_COUNT = 25;
+var COMMENTS = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
   'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
@@ -11,7 +11,7 @@ var SENTENCES = [
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
-var AUTOR_NAMES = [ // Имена придумал сам, кол-во равно кол-ву аватарок и предложений
+var AUTHOR_NAMES = [
   'Артем',
   'Никита',
   'Федор',
@@ -19,24 +19,17 @@ var AUTOR_NAMES = [ // Имена придумал сам, кол-во равн�
   'Мария',
   'Светлана'
 ];
-var NUMBER_OF_AVATARS = 6;
-var MAX_SENTENCES = 2; // Максимальное кол-во предложений в комментарии
+var MAX_AVATAR_NUMBER = 6;
+var MAX_SENTENCES_IN_COMMENT = 2;
 
-// Вынес эти четыре переменные вверх, но рядом с функциями внизу они смотрятся более ясно.
-// Все равно все переменные объявлять вверху?
-var descriptionPhotos = getDescriptionPhotos(NUMBER_OF_PHOTOS);
-var similarListElement = document.querySelector('.pictures');
-var similarUserTemplate = document.querySelector('#picture')
+var imageContainer = document.querySelector('.pictures');
+var randomUserTemplate = document.querySelector('#picture')
     .content
-    .querySelector('.picture'); // Шаблон
+    .querySelector('.picture');
 var fragment = document.createDocumentFragment();
 
 function getRandomIntegerInRange(min, max) { // Произвольное число в диапозоне
   return Math.floor(min + Math.random() * (max + 1 - min));
-}
-
-function getRandomInteger(numberOfElements) { // Произвольное число от 1 до заданного
-  return Math.floor(Math.random() * numberOfElements + 1);
 }
 
 function getRandomElementArr(arr) { // Произвольный элемент массива
@@ -45,7 +38,7 @@ function getRandomElementArr(arr) { // Произвольный элемент �
 
 function getRandomSentence(maxSentences, arrSentences) { // Произвольное предложение в комментарии
   var sentence = '';
-  var max = getRandomInteger(maxSentences);
+  var max = getRandomIntegerInRange(1, maxSentences);
 
   for (i = 1; i <= max; i++) {
     sentence += getRandomElementArr(arrSentences);
@@ -57,39 +50,39 @@ function getRandomSentence(maxSentences, arrSentences) { // Произвольн
   return sentence;
 }
 
-function getRandomArrComments() { // Произвольный массив комментариев
+function getRandomComments() { // Произвольный массив комментариев
   var arrComments = [];
-  var maxComments = getRandomInteger(NUMBER_OF_AVATARS);
+  var maxComments = getRandomIntegerInRange(1, MAX_AVATAR_NUMBER);
 
   for (var i = 1; i <= maxComments; i++) {
-    var randomAvatar = getRandomInteger(NUMBER_OF_AVATARS);
+    var randomAvatar = getRandomIntegerInRange(1, MAX_AVATAR_NUMBER);
 
     arrComments.push({
       avatar: 'img/avatar-' + randomAvatar + '.svg',
-      message: getRandomSentence(MAX_SENTENCES, SENTENCES),
-      name: getRandomElementArr(AUTOR_NAMES)
+      message: getRandomSentence(MAX_SENTENCES_IN_COMMENT, COMMENTS),
+      name: getRandomElementArr(AUTHOR_NAMES)
     });
   }
 
   return arrComments;
 }
 
-function getDescriptionPhotos(numberOfPhotos) {
+function getPhotoDescriptions(numberOfPhotos) {
   var arr = [];
 
   for (var i = 1; i <= numberOfPhotos; i++) {
     arr.push({
       url: 'photos/' + i + '.jpg',
       likes: getRandomIntegerInRange(MIN_LIKES, MAX_LIKES),
-      comments: getRandomArrComments()
+      comments: getRandomComments()
     });
   }
 
   return arr;
 }
 
-function renderDescriptionPhotos(descriptionPhoto) {
-  var descriptionElement = similarUserTemplate.cloneNode(true); // Копирует шаблон
+function renderPhotoDescriptions(descriptionPhoto) {
+  var descriptionElement = randomUserTemplate.cloneNode(true); // Копирует шаблон
 
   descriptionElement.querySelector('.picture__img').src = descriptionPhoto.url;
   descriptionElement.querySelector('.picture__likes').textContent = descriptionPhoto.likes;
@@ -98,7 +91,9 @@ function renderDescriptionPhotos(descriptionPhoto) {
   return descriptionElement;
 }
 
+var descriptionPhotos = getPhotoDescriptions(PHOTO_COUNT);
+
 for (var i = 0; i < descriptionPhotos.length; i++) {
-  fragment.appendChild(renderDescriptionPhotos(descriptionPhotos[i]));
+  fragment.appendChild(renderPhotoDescriptions(descriptionPhotos[i]));
 }
-similarListElement.appendChild(fragment);
+imageContainer.appendChild(fragment);
