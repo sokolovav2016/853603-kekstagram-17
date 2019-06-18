@@ -108,7 +108,6 @@ var blockEffectsElement = blockEditingImgElement.querySelector('.img-upload__eff
 var controlSaturationElement = blockEditingImgElement.querySelector('.img-upload__effect-level');
 var controlSaturationValueElement = controlSaturationElement.querySelector('.effect-level__value');
 var controlSaturationButtonElement = controlSaturationElement.querySelector('.effect-level__pin');
-var controlSaturationDepthElement = controlSaturationElement.querySelector('.effect-level__depth');
 
 // -------- Наполнение главной страницы фото с рандомными комментами и лайками --------
 
@@ -231,7 +230,7 @@ function onEffectClick(evt) {
 
   if (evt.target.classList.contains('effects__radio')) {
     blockPreviewImgElement.className = currentEffect; // Это тогда не нужно?...
-    controlSaturationValueElement.value =  CONTROL_SATURATION_DEFAULT;
+    controlSaturationValueElement.value = CONTROL_SATURATION_DEFAULT;
     onSaturationButtonMouseup(CONTROL_SATURATION_DEFAULT);
     if (evt.target.id !== 'effect-none') {
       controlSaturationElement.classList.remove('hidden');
@@ -242,10 +241,10 @@ function onEffectClick(evt) {
   }
 }
 
-function onSaturationButtonMouseup (value) {
-  controlSaturationValueElement.value =  value;
+function onSaturationButtonMouseup(value) {
+  controlSaturationValueElement.value = value;
   var currentFilter = FILTERS[PREVIEW_EFFECTS.indexOf(blockPreviewImgElement.className)];
-  var coefficient = controlSaturationValueElement.value / 100
+  var coefficient = controlSaturationValueElement.value / 100;
   var filterValue = (currentFilter.max - currentFilter.min) * coefficient + currentFilter.min;
   var currentFilterValue = currentFilter.name + '(' + filterValue + currentFilter.suffix + ')';
   blockPreviewImgElement.style.filter = currentFilterValue;
