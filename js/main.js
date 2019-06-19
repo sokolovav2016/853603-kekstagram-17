@@ -26,15 +26,6 @@ var ESC_KEYCODE = 27;
 var MIN_SCALE = 25;
 var MAX_SCALE = 100; // Сделать объект (перечисление) Scale?
 
-var EFFECTS = [
-  'none',
-  'chrome',
-  'sepia',
-  'marvin',
-  'phobos',
-  'heat'
-];
-
 var FILTERS = [
   {
     name: 'grayscale',
@@ -236,7 +227,7 @@ function addFilterClassname(filterType) {
 
 function setFilterEffectStyle(filterType, filterValue) {
   switch (filterType) {
-      case 'none':
+    case 'none':
       blockPreviewImgElement.style.filter = 'none';
       break;
     case 'chrome':
