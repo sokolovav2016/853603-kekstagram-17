@@ -24,32 +24,18 @@ var MAX_SENTENCES_IN_COMMENT = 2;
 var ESC_KEYCODE = 27;
 
 var MIN_SCALE = 25;
-var MAX_SCALE = 100;
+var MAX_SCALE = 100; // Сделать объект (перечисление) Scale?
 
 var EFFECTS = [
-  'effect-none',
-  'effect-chrome',
-  'effect-sepia',
-  'effect-marvin',
-  'effect-phobos',
-  'effect-heat'
-];
-var PREVIEW_EFFECTS = [
-  'effects__preview--none',
-  'effects__preview--chrome',
-  'effects__preview--sepia',
-  'effects__preview--marvin',
-  'effects__preview--phobos',
-  'effects__preview--heat'
+  'none',
+  'chrome',
+  'sepia',
+  'marvin',
+  'phobos',
+  'heat'
 ];
 
 var FILTERS = [
-  {
-    name: '',
-    min: 0,
-    max: 0,
-    suffix: ''
-  },
   {
     name: 'grayscale',
     min: 0,
@@ -82,7 +68,7 @@ var FILTERS = [
   },
 ];
 
-var CONTROL_SATURATION_DEFAULT = 100;
+var FILTER_VALUE_DEFAULT = 100;
 
 var imageContainerElement = document.querySelector('.pictures');
 var randomUserTemplateElement = document.querySelector('#picture')
@@ -106,7 +92,6 @@ var blockPreviewImgElement = blockPreviewElement.children[0]; // Так норм
 var blockEffectsElement = blockEditingImgElement.querySelector('.img-upload__effects');
 
 var controlSaturationElement = blockEditingImgElement.querySelector('.img-upload__effect-level');
-var controlSaturationValueElement = controlSaturationElement.querySelector('.effect-level__value');
 var controlSaturationButtonElement = controlSaturationElement.querySelector('.effect-level__pin');
 
 // -------- Наполнение главной страницы фото с рандомными комментами и лайками --------
@@ -190,20 +175,122 @@ function onPopupEscPress(evt) {
   }
 }
 
+function onСontrolScaleSmallerClick() { // Откидывание знака % с помощью parseInt, норм?
+  var value = parseInt(inputScaleValueElement.value, 10); // Одинаковая переменная в двух функциях, норм?
+  if (value > MIN_SCALE) {
+    value -= MIN_SCALE;
+    inputScaleValueElement.value = value + '%';
+    blockPreviewImgElement.style.transform = 'scale(' + value / 100 + ')';
+  }
+}
+
+function onСontrolScaleBiggerClick() {
+  var value = parseInt(inputScaleValueElement.value, 10);
+  if (value < MAX_SCALE) {
+    value += MIN_SCALE;
+    inputScaleValueElement.value = value + '%';
+    blockPreviewImgElement.style.transform = 'scale(' + value / 100 + ')';
+  }
+}
+
+function onFilterChange(evt) {
+	setFilter(evt.target.value, FILTER_VALUE_DEFAULT);
+}
+
+function setFilter(type, value) {
+  toggleRangeElementVisibility(type);
+  addFilterClassname(type);
+  setFilterEffectStyle(type, value);
+}
+
+function toggleRangeElementVisibility(filterType) {
+	if (filterType !== 'none') {
+    controlSaturationElement.classList.remove('hidden');
+  } else {
+    controlSaturationElement.classList.add('hidden');
+  }
+}
+
+function addFilterClassname(filterType) {
+	switch (filterType) {
+  	case 'none':
+    	blockPreviewImgElement.className = 'effects__preview--none';
+   		break;
+    case 'chrome':
+    	blockPreviewImgElement.className = 'effects__preview--chrome';
+      break;
+    case 'sepia':
+      blockPreviewImgElement.className = 'effects__preview--sepia';
+      break;
+    case 'marvin':
+      blockPreviewImgElement.className = 'effects__preview--marvin';
+      break;
+    case 'phobos':
+      blockPreviewImgElement.className = 'effects__preview--phobos';
+      break;
+    case 'heat':
+      blockPreviewImgElement.className = 'effects__preview--heat';
+      break;
+  }
+}
+
+function setFilterEffectStyle(filterType, filterValue) {
+  switch (filterType) {
+  	case 'none':
+      blockPreviewImgElement.style.filter = 'none';
+   		break;
+    case 'chrome':
+    	blockPreviewImgElement.style.filter = getCurrentFilterValue(FILTERS[0], filterValue);
+      break;
+    case 'sepia':
+      blockPreviewImgElement.style.filter = getCurrentFilterValue(FILTERS[1], filterValue);
+      break;
+    case 'marvin':
+      blockPreviewImgElement.style.filter = getCurrentFilterValue(FILTERS[2], filterValue);
+      break;
+    case 'phobos':
+      blockPreviewImgElement.style.filter = getCurrentFilterValue(FILTERS[3], filterValue);
+      break;
+    case 'heat':
+      blockPreviewImgElement.style.filter = getCurrentFilterValue(FILTERS[4], filterValue);
+      break;
+  }
+}
+
+function getCurrentFilterValue(currentFilter, filterValue) {
+  var coefficient = filterValue / 100;
+  var finalFilterValue = (currentFilter.max - currentFilter.min) * coefficient + currentFilter.min;
+  var currentFilterValue = currentFilter.name + '(' + finalFilterValue + currentFilter.suffix + ')';
+  return currentFilterValue;
+}
+
+function onPinMouseUp() {
+	var checkedFilterType = blockEffectsElement.querySelector('input:checked').value;
+  setFilter(checkedFilterType, 60);
+}
+
 function openPopup() {
   blockEditingImgElement.classList.remove('hidden');
+
+  var checkedFilterType = blockEffectsElement.querySelector('input[checked]').value;
+  setFilter(checkedFilterType, FILTER_VALUE_DEFAULT);
+
   document.addEventListener('keydown', onPopupEscPress);
+  controlScaleSmallerElement.addEventListener('click', onСontrolScaleSmallerClick);
+  controlScaleBiggerElement.addEventListener('click', onСontrolScaleBiggerClick);
+  blockEffectsElement.addEventListener('change', onFilterChange);
+  controlSaturationButtonElement.addEventListener('mouseup', onPinMouseUp);
   formCloseElement.addEventListener('click', closePopup);
-  blockScalingImgElement.addEventListener('click', onControlScaleClick);
-  blockEffectsElement.addEventListener('click', onEffectClick);
 }
 
 function closePopup() {
   blockEditingImgElement.classList.add('hidden');
   document.removeEventListener('keydown', onPopupEscPress);
+  controlScaleSmallerElement.removeEventListener('click', onСontrolScaleSmallerClick);
+  controlScaleBiggerElement.removeEventListener('click', onСontrolScaleBiggerClick);
+  blockEffectsElement.removeEventListener('change', onFilterChange);
+  controlSaturationButtonElement.removeEventListener('mouseup', onPinMouseUp);
   formCloseElement.removeEventListener('click', closePopup);
-  blockScalingImgElement.removeEventListener('click', onControlScaleClick);
-  blockEffectsElement.removeEventListener('click', onEffectClick);
   formElement.reset();
 }
 
@@ -211,45 +298,3 @@ inputUploadElement.addEventListener('change', function () {
   openPopup();
 });
 
-// Просто привожу controlValueElement.value к числу (parseInt) и знак % сам отбрасывается, так верно?
-function onControlScaleClick(evt) {
-  var value = parseInt(inputScaleValueElement.value, 10);
-  if (evt.target === controlScaleSmallerElement && value > MIN_SCALE) {
-    value -= MIN_SCALE;
-    inputScaleValueElement.value = value + '%';
-    blockPreviewImgElement.style.transform = 'scale(' + value / 100 + ')';
-  } else if (evt.target === controlScaleBiggerElement && value < MAX_SCALE) {
-    value += MIN_SCALE;
-    inputScaleValueElement.value = value + '%';
-    blockPreviewImgElement.style.transform = 'scale(' + value / 100 + ')';
-  }
-}
-
-function onEffectClick(evt) {
-  var currentEffect = PREVIEW_EFFECTS[EFFECTS.indexOf(evt.target.id)];
-
-  if (evt.target.classList.contains('effects__radio')) {
-    blockPreviewImgElement.className = currentEffect; // Это тогда не нужно?...
-    controlSaturationValueElement.value = CONTROL_SATURATION_DEFAULT;
-    onSaturationButtonMouseup(CONTROL_SATURATION_DEFAULT);
-    if (evt.target.id !== 'effect-none') {
-      controlSaturationElement.classList.remove('hidden');
-    } else {
-      controlSaturationElement.classList.add('hidden');
-      blockPreviewImgElement.style.filter = 'none';
-    }
-  }
-}
-
-function onSaturationButtonMouseup(value) {
-  controlSaturationValueElement.value = value;
-  var currentFilter = FILTERS[PREVIEW_EFFECTS.indexOf(blockPreviewImgElement.className)];
-  var coefficient = controlSaturationValueElement.value / 100;
-  var filterValue = (currentFilter.max - currentFilter.min) * coefficient + currentFilter.min;
-  var currentFilterValue = currentFilter.name + '(' + filterValue + currentFilter.suffix + ')';
-  blockPreviewImgElement.style.filter = currentFilterValue;
-}
-
-controlSaturationButtonElement.addEventListener('mouseup', function () {
-  onSaturationButtonMouseup(25); // Для примера
-});
