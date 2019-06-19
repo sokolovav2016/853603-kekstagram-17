@@ -194,7 +194,7 @@ function onСontrolScaleBiggerClick() {
 }
 
 function onFilterChange(evt) {
-	setFilter(evt.target.value, FILTER_VALUE_DEFAULT);
+  setFilter(evt.target.value, FILTER_VALUE_DEFAULT);
 }
 
 function setFilter(type, value) {
@@ -204,7 +204,7 @@ function setFilter(type, value) {
 }
 
 function toggleRangeElementVisibility(filterType) {
-	if (filterType !== 'none') {
+  if (filterType !== 'none') {
     controlSaturationElement.classList.remove('hidden');
   } else {
     controlSaturationElement.classList.add('hidden');
@@ -212,12 +212,12 @@ function toggleRangeElementVisibility(filterType) {
 }
 
 function addFilterClassname(filterType) {
-	switch (filterType) {
-  	case 'none':
-    	blockPreviewImgElement.className = 'effects__preview--none';
-   		break;
+  switch (filterType) {
+    case 'none':
+      blockPreviewImgElement.className = 'effects__preview--none';
+      break;
     case 'chrome':
-    	blockPreviewImgElement.className = 'effects__preview--chrome';
+      blockPreviewImgElement.className = 'effects__preview--chrome';
       break;
     case 'sepia':
       blockPreviewImgElement.className = 'effects__preview--sepia';
@@ -236,11 +236,11 @@ function addFilterClassname(filterType) {
 
 function setFilterEffectStyle(filterType, filterValue) {
   switch (filterType) {
-  	case 'none':
+      case 'none':
       blockPreviewImgElement.style.filter = 'none';
-   		break;
+      break;
     case 'chrome':
-    	blockPreviewImgElement.style.filter = getCurrentFilterValue(FILTERS[0], filterValue);
+      blockPreviewImgElement.style.filter = getCurrentFilterValue(FILTERS[0], filterValue);
       break;
     case 'sepia':
       blockPreviewImgElement.style.filter = getCurrentFilterValue(FILTERS[1], filterValue);
@@ -265,7 +265,7 @@ function getCurrentFilterValue(currentFilter, filterValue) {
 }
 
 function onPinMouseUp() {
-	var checkedFilterType = blockEffectsElement.querySelector('input:checked').value;
+  var checkedFilterType = blockEffectsElement.querySelector('input:checked').value;
   setFilter(checkedFilterType, 60);
 }
 
