@@ -85,6 +85,8 @@ var blockEffectsElement = blockEditingImgElement.querySelector('.img-upload__eff
 var controlSaturationElement = blockEditingImgElement.querySelector('.img-upload__effect-level');
 var controlSaturationButtonElement = controlSaturationElement.querySelector('.effect-level__pin');
 
+var userCommentElement = formElement.querySelector('.text__description');
+
 // -------- Наполнение главной страницы фото с рандомными комментами и лайками --------
 
 function getRandomIntegerInRange(min, max) { // Произвольное число в диапозоне
@@ -162,7 +164,9 @@ imageContainerElement.appendChild(fragment);
 
 function onPopupEscPress(evt) {
   if (evt.keyCode === ESC_KEYCODE) {
-    closePopup();
+    if (document.activeElement !== userCommentElement) {
+      closePopup();
+    }
   }
 }
 
@@ -260,6 +264,14 @@ function onPinMouseUp() {
   setFilter(checkedFilterType, 60);
 }
 
+function onUserCommentElementEnter() {
+  if (userCommentElement.validity.tooLong) {
+    userCommentElement.setCustomValidity('Имя не должно превышать 140-ти символов');
+  } else {
+    userCommentElement.setCustomValidity('');
+  }
+}
+
 function openPopup() {
   blockEditingImgElement.classList.remove('hidden');
 
@@ -271,6 +283,9 @@ function openPopup() {
   controlScaleBiggerElement.addEventListener('click', onСontrolScaleBiggerClick);
   blockEffectsElement.addEventListener('change', onFilterChange);
   controlSaturationButtonElement.addEventListener('mouseup', onPinMouseUp);
+
+  userCommentElement.addEventListener('invalid', onUserCommentElementEnter);
+
   formCloseElement.addEventListener('click', closePopup);
 }
 
@@ -282,6 +297,9 @@ function closePopup() {
   blockEffectsElement.removeEventListener('change', onFilterChange);
   controlSaturationButtonElement.removeEventListener('mouseup', onPinMouseUp);
   formCloseElement.removeEventListener('click', closePopup);
+
+  userCommentElement.removeEventListener('invalid', onUserCommentElementEnter);
+
   formElement.reset();
 }
 
