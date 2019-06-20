@@ -21,12 +21,71 @@ var AUTHOR_NAMES = [
 ];
 var MAX_AVATAR_NUMBER = 6;
 var MAX_SENTENCES_IN_COMMENT = 2;
+var ESC_KEYCODE = 27;
 
-var imageContainer = document.querySelector('.pictures');
-var randomUserTemplate = document.querySelector('#picture')
+var MIN_SCALE = 25;
+var MAX_SCALE = 100; // Сделать объект (перечисление) Scale?
+
+var FILTERS = [
+  {
+    name: 'grayscale',
+    min: 0,
+    max: 1,
+    suffix: ''
+  },
+  {
+    name: 'sepia',
+    min: 0,
+    max: 1,
+    suffix: ''
+  },
+  {
+    name: 'invert',
+    min: 0,
+    max: 100,
+    suffix: '%'
+  },
+  {
+    name: 'blur',
+    min: 0,
+    max: 3,
+    suffix: 'px'
+  },
+  {
+    name: 'brightness',
+    min: 1,
+    max: 3,
+    suffix: ''
+  },
+];
+
+var FILTER_VALUE_DEFAULT = 100;
+
+var imageContainerElement = document.querySelector('.pictures');
+var randomUserTemplateElement = document.querySelector('#picture')
     .content
     .querySelector('.picture');
 var fragment = document.createDocumentFragment();
+
+var formElement = imageContainerElement.querySelector('.img-upload__form');
+var inputUploadElement = formElement.querySelector('.img-upload__input');
+var blockEditingImgElement = formElement.querySelector('.img-upload__overlay');
+var formCloseElement = blockEditingImgElement.querySelector('.img-upload__cancel');
+
+var blockScalingImgElement = blockEditingImgElement.querySelector('.img-upload__scale');
+var controlScaleSmallerElement = blockScalingImgElement.querySelector('.scale__control--smaller');
+var controlScaleBiggerElement = blockScalingImgElement.querySelector('.scale__control--bigger');
+var inputScaleValueElement = blockScalingImgElement.querySelector('.scale__control--value');
+
+var blockPreviewElement = blockEditingImgElement.querySelector('.img-upload__preview');
+var blockPreviewImgElement = blockPreviewElement.children[0]; // Так норм (class же нету)?
+
+var blockEffectsElement = blockEditingImgElement.querySelector('.img-upload__effects');
+
+var controlSaturationElement = blockEditingImgElement.querySelector('.img-upload__effect-level');
+var controlSaturationButtonElement = controlSaturationElement.querySelector('.effect-level__pin');
+
+// -------- Наполнение главной страницы фото с рандомными комментами и лайками --------
 
 function getRandomIntegerInRange(min, max) { // Произвольное число в диапозоне
   return Math.floor(min + Math.random() * (max + 1 - min));
@@ -83,7 +142,7 @@ function getPhotoDescriptions(numberOfPhotos) {
 }
 
 function renderPhotoDescriptions(descriptionPhoto) {
-  var descriptionElement = randomUserTemplate.cloneNode(true); // Копирует шаблон
+  var descriptionElement = randomUserTemplateElement.cloneNode(true); // Копирует шаблон
 
   descriptionElement.querySelector('.picture__img').src = descriptionPhoto.url;
   descriptionElement.querySelector('.picture__likes').textContent = descriptionPhoto.likes;
@@ -92,9 +151,141 @@ function renderPhotoDescriptions(descriptionPhoto) {
   return descriptionElement;
 }
 
-var descriptionPhotos = getPhotoDescriptions(PHOTO_COUNT);
+var descriptionPhotos = getPhotoDescriptions(PHOTO_COUNT); // Это оставляем здесь?
 
 for (var i = 0; i < descriptionPhotos.length; i++) {
   fragment.appendChild(renderPhotoDescriptions(descriptionPhotos[i]));
 }
-imageContainer.appendChild(fragment);
+imageContainerElement.appendChild(fragment);
+
+// -------- Открытие / закрытие попапа и логика внутри --------
+
+function onPopupEscPress(evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    closePopup();
+  }
+}
+
+function onСontrolScaleSmallerClick() { // Откидывание знака % с помощью parseInt, норм?
+  var value = parseInt(inputScaleValueElement.value, 10); // Одинаковая переменная в двух функциях, норм?
+  if (value > MIN_SCALE) {
+    value -= MIN_SCALE;
+    inputScaleValueElement.value = value + '%';
+    blockPreviewImgElement.style.transform = 'scale(' + value / 100 + ')';
+  }
+}
+
+function onСontrolScaleBiggerClick() {
+  var value = parseInt(inputScaleValueElement.value, 10);
+  if (value < MAX_SCALE) {
+    value += MIN_SCALE;
+    inputScaleValueElement.value = value + '%';
+    blockPreviewImgElement.style.transform = 'scale(' + value / 100 + ')';
+  }
+}
+
+function onFilterChange(evt) {
+  setFilter(evt.target.value, FILTER_VALUE_DEFAULT);
+}
+
+function setFilter(type, value) {
+  toggleRangeElementVisibility(type);
+  addFilterClassname(type);
+  setFilterEffectStyle(type, value);
+}
+
+function toggleRangeElementVisibility(filterType) {
+  if (filterType !== 'none') {
+    controlSaturationElement.classList.remove('hidden');
+  } else {
+    controlSaturationElement.classList.add('hidden');
+  }
+}
+
+function addFilterClassname(filterType) {
+  switch (filterType) {
+    case 'none':
+      blockPreviewImgElement.className = 'effects__preview--none';
+      break;
+    case 'chrome':
+      blockPreviewImgElement.className = 'effects__preview--chrome';
+      break;
+    case 'sepia':
+      blockPreviewImgElement.className = 'effects__preview--sepia';
+      break;
+    case 'marvin':
+      blockPreviewImgElement.className = 'effects__preview--marvin';
+      break;
+    case 'phobos':
+      blockPreviewImgElement.className = 'effects__preview--phobos';
+      break;
+    case 'heat':
+      blockPreviewImgElement.className = 'effects__preview--heat';
+      break;
+  }
+}
+
+function setFilterEffectStyle(filterType, filterValue) {
+  switch (filterType) {
+    case 'none':
+      blockPreviewImgElement.style.filter = 'none';
+      break;
+    case 'chrome':
+      blockPreviewImgElement.style.filter = getCurrentFilterValue(FILTERS[0], filterValue);
+      break;
+    case 'sepia':
+      blockPreviewImgElement.style.filter = getCurrentFilterValue(FILTERS[1], filterValue);
+      break;
+    case 'marvin':
+      blockPreviewImgElement.style.filter = getCurrentFilterValue(FILTERS[2], filterValue);
+      break;
+    case 'phobos':
+      blockPreviewImgElement.style.filter = getCurrentFilterValue(FILTERS[3], filterValue);
+      break;
+    case 'heat':
+      blockPreviewImgElement.style.filter = getCurrentFilterValue(FILTERS[4], filterValue);
+      break;
+  }
+}
+
+function getCurrentFilterValue(currentFilter, filterValue) {
+  var coefficient = filterValue / 100;
+  var finalFilterValue = (currentFilter.max - currentFilter.min) * coefficient + currentFilter.min;
+  var currentFilterValue = currentFilter.name + '(' + finalFilterValue + currentFilter.suffix + ')';
+  return currentFilterValue;
+}
+
+function onPinMouseUp() {
+  var checkedFilterType = blockEffectsElement.querySelector('input:checked').value;
+  setFilter(checkedFilterType, 60);
+}
+
+function openPopup() {
+  blockEditingImgElement.classList.remove('hidden');
+
+  var checkedFilterType = blockEffectsElement.querySelector('input[checked]').value;
+  setFilter(checkedFilterType, FILTER_VALUE_DEFAULT);
+
+  document.addEventListener('keydown', onPopupEscPress);
+  controlScaleSmallerElement.addEventListener('click', onСontrolScaleSmallerClick);
+  controlScaleBiggerElement.addEventListener('click', onСontrolScaleBiggerClick);
+  blockEffectsElement.addEventListener('change', onFilterChange);
+  controlSaturationButtonElement.addEventListener('mouseup', onPinMouseUp);
+  formCloseElement.addEventListener('click', closePopup);
+}
+
+function closePopup() {
+  blockEditingImgElement.classList.add('hidden');
+  document.removeEventListener('keydown', onPopupEscPress);
+  controlScaleSmallerElement.removeEventListener('click', onСontrolScaleSmallerClick);
+  controlScaleBiggerElement.removeEventListener('click', onСontrolScaleBiggerClick);
+  blockEffectsElement.removeEventListener('change', onFilterChange);
+  controlSaturationButtonElement.removeEventListener('mouseup', onPinMouseUp);
+  formCloseElement.removeEventListener('click', closePopup);
+  formElement.reset();
+}
+
+inputUploadElement.addEventListener('change', function () {
+  openPopup();
+});
+
