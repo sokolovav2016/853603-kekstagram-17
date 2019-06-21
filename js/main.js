@@ -168,13 +168,13 @@ function onPopupEscPress(evt) {
   }
 }
 
-function onCommentFocus(evt) {
+function onCommentFocus() {
   document.removeEventListener('keydown', onPopupEscPress);
   userCommentElement.addEventListener('blur', onCommentBlur);
   userCommentElement.removeEventListener('focus', onCommentFocus);
 }
 
-function onCommentBlur(evt) {
+function onCommentBlur() {
   document.addEventListener('keydown', onPopupEscPress);
   userCommentElement.addEventListener('focus', onCommentFocus);
   userCommentElement.removeEventListener('blur', onCommentBlur);
@@ -275,7 +275,7 @@ function onPinMouseUp() {
 }
 
 function onUserCommentElementEnter(evt) {
-  if (evt.target.value.length > 1) {
+  if (evt.target.value.length > 140) {
     evt.target.setCustomValidity('Давай покороче, максимум 140 символов');
   } else {
     evt.target.setCustomValidity('');
