@@ -274,11 +274,11 @@ function onPinMouseUp() {
   setFilter(checkedFilterType, 60);
 }
 
-function onUserCommentElementEnter() {
-  if (userCommentElement.validity.tooLong) {
-    userCommentElement.setCustomValidity('Имя не должно превышать 140-ти символов');
+function onUserCommentElementEnter(evt) {
+  if (evt.target.value.length > 1) {
+    evt.target.setCustomValidity('Давай покороче, максимум 140 символов');
   } else {
-    userCommentElement.setCustomValidity('');
+    evt.target.setCustomValidity('');
   }
 }
 
@@ -293,7 +293,7 @@ function openPopup() {
   controlScaleBiggerElement.addEventListener('click', onСontrolScaleBiggerClick);
   blockEffectsElement.addEventListener('change', onFilterChange);
   controlSaturationButtonElement.addEventListener('mouseup', onPinMouseUp);
-  userCommentElement.addEventListener('invalid', onUserCommentElementEnter);
+  userCommentElement.addEventListener('input', onUserCommentElementEnter);
   userCommentElement.addEventListener('focus', onCommentFocus);
   formCloseElement.addEventListener('click', closePopup);
 }
@@ -306,7 +306,7 @@ function closePopup() {
   blockEffectsElement.removeEventListener('change', onFilterChange);
   controlSaturationButtonElement.removeEventListener('mouseup', onPinMouseUp);
   formCloseElement.removeEventListener('click', closePopup);
-  userCommentElement.removeEventListener('invalid', onUserCommentElementEnter);
+  userCommentElement.removeEventListener('input', onUserCommentElementEnter);
   userCommentElement.removeEventListener('focus', onCommentFocus);
   formElement.reset();
 }
