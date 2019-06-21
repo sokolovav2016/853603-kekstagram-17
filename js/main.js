@@ -164,10 +164,20 @@ imageContainerElement.appendChild(fragment);
 
 function onPopupEscPress(evt) {
   if (evt.keyCode === ESC_KEYCODE) {
-    if (document.activeElement !== userCommentElement) {
-      closePopup();
-    }
+    closePopup();
   }
+}
+
+function onCommentFocus(evt) {
+  document.removeEventListener('keydown', onPopupEscPress);
+  userCommentElement.addEventListener('blur', onCommentBlur);
+  userCommentElement.removeEventListener('focus', onCommentFocus);
+}
+
+function onCommentBlur(evt) {
+  document.addEventListener('keydown', onPopupEscPress);
+  userCommentElement.addEventListener('focus', onCommentFocus);
+  userCommentElement.removeEventListener('blur', onCommentBlur);
 }
 
 function onСontrolScaleSmallerClick() { // Откидывание знака % с помощью parseInt, норм?
@@ -283,9 +293,8 @@ function openPopup() {
   controlScaleBiggerElement.addEventListener('click', onСontrolScaleBiggerClick);
   blockEffectsElement.addEventListener('change', onFilterChange);
   controlSaturationButtonElement.addEventListener('mouseup', onPinMouseUp);
-
   userCommentElement.addEventListener('invalid', onUserCommentElementEnter);
-
+  userCommentElement.addEventListener('focus', onCommentFocus);
   formCloseElement.addEventListener('click', closePopup);
 }
 
@@ -297,9 +306,8 @@ function closePopup() {
   blockEffectsElement.removeEventListener('change', onFilterChange);
   controlSaturationButtonElement.removeEventListener('mouseup', onPinMouseUp);
   formCloseElement.removeEventListener('click', closePopup);
-
   userCommentElement.removeEventListener('invalid', onUserCommentElementEnter);
-
+  userCommentElement.removeEventListener('focus', onCommentFocus);
   formElement.reset();
 }
 
