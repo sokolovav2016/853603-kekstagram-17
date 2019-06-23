@@ -85,6 +85,8 @@ var blockEffectsElement = blockEditingImgElement.querySelector('.img-upload__eff
 var controlSaturationElement = blockEditingImgElement.querySelector('.img-upload__effect-level');
 var controlSaturationButtonElement = controlSaturationElement.querySelector('.effect-level__pin');
 
+var userCommentElement = formElement.querySelector('.text__description');
+
 // -------- Наполнение главной страницы фото с рандомными комментами и лайками --------
 
 function getRandomIntegerInRange(min, max) { // Произвольное число в диапозоне
@@ -164,6 +166,18 @@ function onPopupEscPress(evt) {
   if (evt.keyCode === ESC_KEYCODE) {
     closePopup();
   }
+}
+
+function onCommentFocus() {
+  document.removeEventListener('keydown', onPopupEscPress);
+  userCommentElement.addEventListener('blur', onCommentBlur);
+  userCommentElement.removeEventListener('focus', onCommentFocus);
+}
+
+function onCommentBlur() {
+  document.addEventListener('keydown', onPopupEscPress);
+  userCommentElement.addEventListener('focus', onCommentFocus);
+  userCommentElement.removeEventListener('blur', onCommentBlur);
 }
 
 function onСontrolScaleSmallerClick() { // Откидывание знака % с помощью parseInt, норм?
@@ -260,6 +274,14 @@ function onPinMouseUp() {
   setFilter(checkedFilterType, 60);
 }
 
+function onUserCommentElementEnter(evt) {
+  if (evt.target.value.length > 140) {
+    evt.target.setCustomValidity('Давай покороче, максимум 140 символов');
+  } else {
+    evt.target.setCustomValidity('');
+  }
+}
+
 function openPopup() {
   blockEditingImgElement.classList.remove('hidden');
 
@@ -271,6 +293,8 @@ function openPopup() {
   controlScaleBiggerElement.addEventListener('click', onСontrolScaleBiggerClick);
   blockEffectsElement.addEventListener('change', onFilterChange);
   controlSaturationButtonElement.addEventListener('mouseup', onPinMouseUp);
+  userCommentElement.addEventListener('input', onUserCommentElementEnter);
+  userCommentElement.addEventListener('focus', onCommentFocus);
   formCloseElement.addEventListener('click', closePopup);
 }
 
@@ -282,6 +306,8 @@ function closePopup() {
   blockEffectsElement.removeEventListener('change', onFilterChange);
   controlSaturationButtonElement.removeEventListener('mouseup', onPinMouseUp);
   formCloseElement.removeEventListener('click', closePopup);
+  userCommentElement.removeEventListener('input', onUserCommentElementEnter);
+  userCommentElement.removeEventListener('focus', onCommentFocus);
   formElement.reset();
 }
 
