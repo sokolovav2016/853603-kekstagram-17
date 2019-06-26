@@ -225,7 +225,7 @@ function setFilter(type, value) {
 
 function hideSlider(type) {
   if (type === 'none') {
-    sliderElement.classList.add('hidden')
+    sliderElement.classList.add('hidden');
   } else {
     sliderElement.classList.remove('hidden');
   }
