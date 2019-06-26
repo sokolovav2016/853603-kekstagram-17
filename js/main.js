@@ -26,7 +26,7 @@ var ESC_KEYCODE = 27;
 var MIN_SCALE = 25;
 var MAX_SCALE = 100;
 
-var MAX_CHARACTERS_IN_COMMENT
+var MAX_CHARACTERS_IN_COMMENT = 140;
 
 var FILTERS = [
   {
@@ -224,7 +224,7 @@ function setFilter(type, value) {
 }
 
 function hideSlider(type) {
-  type === 'none' ? sliderElement.classList.add('hidden') : sliderElement.classList.remove('hidden');
+  (type === 'none') ? sliderElement.classList.add('hidden') : sliderElement.classList.remove('hidden');
 }
 
 function setPreviewClass(type) {
@@ -346,7 +346,7 @@ function openPopup() {
 
   var checkedFilterType = effectsElement.querySelector('input[checked]').value;
   setFilter(checkedFilterType, FILTER_VALUE_DEFAULT);
-  setSlider(sliderControlDefault, sliderValueElement.value)
+  setSlider(sliderControlDefault, sliderValueElement.value);
 
   document.addEventListener('keydown', onPopupEscPress);
   scaleSmallElement.addEventListener('click', onСontrolScaleSmallerClick);
