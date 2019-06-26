@@ -224,7 +224,11 @@ function setFilter(type, value) {
 }
 
 function hideSlider(type) {
-  (type === 'none') ? sliderElement.classList.add('hidden') : sliderElement.classList.remove('hidden');
+  if (type === 'none') {
+    sliderElement.classList.add('hidden')
+  } else {
+    sliderElement.classList.remove('hidden');
+  }
 }
 
 function setPreviewClass(type) {
