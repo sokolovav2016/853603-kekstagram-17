@@ -24,7 +24,9 @@ var MAX_SENTENCES_IN_COMMENT = 2;
 var ESC_KEYCODE = 27;
 
 var MIN_SCALE = 25;
-var MAX_SCALE = 100; // Сделать объект (перечисление) Scale?
+var MAX_SCALE = 100;
+
+var MAX_CHARACTERS_IN_COMMENT = 140;
 
 var FILTERS = [
   {
@@ -60,6 +62,8 @@ var FILTERS = [
 ];
 
 var FILTER_VALUE_DEFAULT = 100;
+var PIN_WIDTH = 18;
+var SLIDER_WIDTH = 453;
 
 var imageContainerElement = document.querySelector('.pictures');
 var randomUserTemplateElement = document.querySelector('#picture')
@@ -69,23 +73,27 @@ var fragment = document.createDocumentFragment();
 
 var formElement = imageContainerElement.querySelector('.img-upload__form');
 var inputUploadElement = formElement.querySelector('.img-upload__input');
-var blockEditingImgElement = formElement.querySelector('.img-upload__overlay');
-var formCloseElement = blockEditingImgElement.querySelector('.img-upload__cancel');
+var editingImgElement = formElement.querySelector('.img-upload__overlay');
+var closeFormElement = editingImgElement.querySelector('.img-upload__cancel');
 
-var blockScalingImgElement = blockEditingImgElement.querySelector('.img-upload__scale');
-var controlScaleSmallerElement = blockScalingImgElement.querySelector('.scale__control--smaller');
-var controlScaleBiggerElement = blockScalingImgElement.querySelector('.scale__control--bigger');
-var inputScaleValueElement = blockScalingImgElement.querySelector('.scale__control--value');
+var scaleImgElement = editingImgElement.querySelector('.img-upload__scale');
+var scaleSmallElement = scaleImgElement.querySelector('.scale__control--smaller');
+var scaleBigElement = scaleImgElement.querySelector('.scale__control--bigger');
+var scaleValueElement = scaleImgElement.querySelector('.scale__control--value');
 
-var blockPreviewElement = blockEditingImgElement.querySelector('.img-upload__preview');
-var blockPreviewImgElement = blockPreviewElement.children[0]; // Так норм (class же нету)?
+var previewElement = editingImgElement.querySelector('.img-upload__preview');
+var previewImgElement = previewElement.children[0];
 
-var blockEffectsElement = blockEditingImgElement.querySelector('.img-upload__effects');
+var effectsElement = editingImgElement.querySelector('.img-upload__effects');
 
-var controlSaturationElement = blockEditingImgElement.querySelector('.img-upload__effect-level');
-var controlSaturationButtonElement = controlSaturationElement.querySelector('.effect-level__pin');
+var sliderElement = editingImgElement.querySelector('.img-upload__effect-level');
+var sliderControlElement = sliderElement.querySelector('.effect-level__pin');
+var sliderBarElement = sliderElement.querySelector('.effect-level__depth');
+var sliderLineElement = sliderElement.querySelector('.effect-level__line');
+var sliderValueElement = sliderElement.querySelector('.effect-level__value');
+var sliderControlDefault = SLIDER_WIDTH / FILTER_VALUE_DEFAULT * sliderValueElement.value;
 
-var userCommentElement = formElement.querySelector('.text__description');
+var commentElement = formElement.querySelector('.text__description');
 
 // -------- Наполнение главной страницы фото с рандомными комментами и лайками --------
 
@@ -170,144 +178,199 @@ function onPopupEscPress(evt) {
 
 function onCommentFocus() {
   document.removeEventListener('keydown', onPopupEscPress);
-  userCommentElement.addEventListener('blur', onCommentBlur);
-  userCommentElement.removeEventListener('focus', onCommentFocus);
+  commentElement.addEventListener('blur', onCommentBlur);
+  commentElement.removeEventListener('focus', onCommentFocus);
 }
 
 function onCommentBlur() {
   document.addEventListener('keydown', onPopupEscPress);
-  userCommentElement.addEventListener('focus', onCommentFocus);
-  userCommentElement.removeEventListener('blur', onCommentBlur);
+  commentElement.addEventListener('focus', onCommentFocus);
+  commentElement.removeEventListener('blur', onCommentBlur);
 }
 
-function onСontrolScaleSmallerClick() { // Откидывание знака % с помощью parseInt, норм?
-  var value = parseInt(inputScaleValueElement.value, 10); // Одинаковая переменная в двух функциях, норм?
+// Размеры Preview
+
+function onСontrolScaleSmallerClick() {
+  var value = parseInt(scaleValueElement.value, 10);
+
   if (value > MIN_SCALE) {
     value -= MIN_SCALE;
-    inputScaleValueElement.value = value + '%';
-    blockPreviewImgElement.style.transform = 'scale(' + value / 100 + ')';
+    scaleValueElement.value = value + '%';
+    previewImgElement.style.transform = 'scale(' + value / 100 + ')';
   }
 }
 
 function onСontrolScaleBiggerClick() {
-  var value = parseInt(inputScaleValueElement.value, 10);
+  var value = parseInt(scaleValueElement.value, 10);
+
   if (value < MAX_SCALE) {
     value += MIN_SCALE;
-    inputScaleValueElement.value = value + '%';
-    blockPreviewImgElement.style.transform = 'scale(' + value / 100 + ')';
+    scaleValueElement.value = value + '%';
+    previewImgElement.style.transform = 'scale(' + value / 100 + ')';
   }
 }
+
+// Добавление фильтра
 
 function onFilterChange(evt) {
   setFilter(evt.target.value, FILTER_VALUE_DEFAULT);
+  setSlider(SLIDER_WIDTH, FILTER_VALUE_DEFAULT);
 }
 
 function setFilter(type, value) {
-  toggleRangeElementVisibility(type);
-  addFilterClassname(type);
-  setFilterEffectStyle(type, value);
+  hideSlider(type);
+  setPreviewClass(type);
+  setPreviewFilterStyle(type, value);
 }
 
-function toggleRangeElementVisibility(filterType) {
-  if (filterType !== 'none') {
-    controlSaturationElement.classList.remove('hidden');
+function hideSlider(type) {
+  if (type === 'none') {
+    sliderElement.classList.add('hidden');
   } else {
-    controlSaturationElement.classList.add('hidden');
+    sliderElement.classList.remove('hidden');
   }
 }
 
-function addFilterClassname(filterType) {
-  switch (filterType) {
+function setPreviewClass(type) {
+  switch (type) {
     case 'none':
-      blockPreviewImgElement.className = 'effects__preview--none';
+      previewImgElement.className = 'effects__preview--none';
       break;
     case 'chrome':
-      blockPreviewImgElement.className = 'effects__preview--chrome';
+      previewImgElement.className = 'effects__preview--chrome';
       break;
     case 'sepia':
-      blockPreviewImgElement.className = 'effects__preview--sepia';
+      previewImgElement.className = 'effects__preview--sepia';
       break;
     case 'marvin':
-      blockPreviewImgElement.className = 'effects__preview--marvin';
+      previewImgElement.className = 'effects__preview--marvin';
       break;
     case 'phobos':
-      blockPreviewImgElement.className = 'effects__preview--phobos';
+      previewImgElement.className = 'effects__preview--phobos';
       break;
     case 'heat':
-      blockPreviewImgElement.className = 'effects__preview--heat';
+      previewImgElement.className = 'effects__preview--heat';
       break;
   }
 }
 
-function setFilterEffectStyle(filterType, filterValue) {
-  switch (filterType) {
+function getFilterValue(filter, value) {
+  var coefficient = value / 100;
+  var filterValue = (filter.max - filter.min) * coefficient + filter.min;
+  return filter.name + '(' + filterValue + filter.suffix + ')';
+}
+
+function setPreviewFilterStyle(type, value) {
+  switch (type) {
     case 'none':
-      blockPreviewImgElement.style.filter = 'none';
+      previewImgElement.style.filter = '';
       break;
     case 'chrome':
-      blockPreviewImgElement.style.filter = getCurrentFilterValue(FILTERS[0], filterValue);
+      previewImgElement.style.filter = getFilterValue(FILTERS[0], value);
       break;
     case 'sepia':
-      blockPreviewImgElement.style.filter = getCurrentFilterValue(FILTERS[1], filterValue);
+      previewImgElement.style.filter = getFilterValue(FILTERS[1], value);
       break;
     case 'marvin':
-      blockPreviewImgElement.style.filter = getCurrentFilterValue(FILTERS[2], filterValue);
+      previewImgElement.style.filter = getFilterValue(FILTERS[2], value);
       break;
     case 'phobos':
-      blockPreviewImgElement.style.filter = getCurrentFilterValue(FILTERS[3], filterValue);
+      previewImgElement.style.filter = getFilterValue(FILTERS[3], value);
       break;
     case 'heat':
-      blockPreviewImgElement.style.filter = getCurrentFilterValue(FILTERS[4], filterValue);
+      previewImgElement.style.filter = getFilterValue(FILTERS[4], value);
       break;
   }
 }
 
-function getCurrentFilterValue(currentFilter, filterValue) {
-  var coefficient = filterValue / 100;
-  var finalFilterValue = (currentFilter.max - currentFilter.min) * coefficient + currentFilter.min;
-  var currentFilterValue = currentFilter.name + '(' + finalFilterValue + currentFilter.suffix + ')';
-  return currentFilterValue;
+// Перемещение ползунка
+
+function onPinMouseDown(evt) {
+  elementDrag(evt);
 }
 
-function onPinMouseUp() {
-  var checkedFilterType = blockEffectsElement.querySelector('input:checked').value;
-  setFilter(checkedFilterType, 60);
+function setSlider(shift, value) {
+  sliderControlElement.style.left = shift + 'px';
+  sliderBarElement.style.width = value + '%';
+  sliderValueElement.value = value;
+
+  var checkedFilterType = effectsElement.querySelector('input:checked').value;
+  setFilter(checkedFilterType, value);
 }
 
-function onUserCommentElementEnter(evt) {
-  if (evt.target.value.length > 140) {
+function elementDrag(evt) {
+  evt.preventDefault();
+
+  var dragElement = evt.target;
+  var startCoord = evt.clientX;
+
+  function onMouseMove(moveEvt) {
+    moveEvt.preventDefault();
+
+    var line = sliderLineElement.getBoundingClientRect();
+
+    if (moveEvt.clientX > line.left - (PIN_WIDTH / 2) && moveEvt.clientX < line.left + line.width + (PIN_WIDTH / 2)) {
+      var shift = startCoord - moveEvt.clientX;
+      var parentShift = dragElement.offsetLeft - shift;
+
+      if (parentShift >= 0 && parentShift <= line.width) {
+        startCoord = moveEvt.clientX;
+        var value = Math.round(parentShift / line.width * 100);
+
+        setSlider(parentShift, value);
+      }
+    }
+  }
+
+  function onMouseUp(upEvt) {
+    upEvt.preventDefault();
+
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  }
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+}
+
+// Валидация
+
+function onUserCommentElementInput(evt) {
+  if (evt.target.value.length > MAX_CHARACTERS_IN_COMMENT) {
     evt.target.setCustomValidity('Давай покороче, максимум 140 символов');
   } else {
     evt.target.setCustomValidity('');
   }
 }
 
-function openPopup() {
-  blockEditingImgElement.classList.remove('hidden');
+// Основной блок
 
-  var checkedFilterType = blockEffectsElement.querySelector('input[checked]').value;
+function openPopup() {
+  editingImgElement.classList.remove('hidden');
+
+  var checkedFilterType = effectsElement.querySelector('input[checked]').value;
   setFilter(checkedFilterType, FILTER_VALUE_DEFAULT);
+  setSlider(sliderControlDefault, sliderValueElement.value);
 
   document.addEventListener('keydown', onPopupEscPress);
-  controlScaleSmallerElement.addEventListener('click', onСontrolScaleSmallerClick);
-  controlScaleBiggerElement.addEventListener('click', onСontrolScaleBiggerClick);
-  blockEffectsElement.addEventListener('change', onFilterChange);
-  controlSaturationButtonElement.addEventListener('mouseup', onPinMouseUp);
-  userCommentElement.addEventListener('input', onUserCommentElementEnter);
-  userCommentElement.addEventListener('focus', onCommentFocus);
-  formCloseElement.addEventListener('click', closePopup);
+  scaleSmallElement.addEventListener('click', onСontrolScaleSmallerClick);
+  scaleBigElement.addEventListener('click', onСontrolScaleBiggerClick);
+  effectsElement.addEventListener('change', onFilterChange);
+  sliderControlElement.addEventListener('mousedown', onPinMouseDown);
+  commentElement.addEventListener('input', onUserCommentElementInput);
+  commentElement.addEventListener('focus', onCommentFocus);
+  closeFormElement.addEventListener('click', closePopup);
 }
 
 function closePopup() {
-  blockEditingImgElement.classList.add('hidden');
+  editingImgElement.classList.add('hidden');
   document.removeEventListener('keydown', onPopupEscPress);
-  controlScaleSmallerElement.removeEventListener('click', onСontrolScaleSmallerClick);
-  controlScaleBiggerElement.removeEventListener('click', onСontrolScaleBiggerClick);
-  blockEffectsElement.removeEventListener('change', onFilterChange);
-  controlSaturationButtonElement.removeEventListener('mouseup', onPinMouseUp);
-  formCloseElement.removeEventListener('click', closePopup);
-  userCommentElement.removeEventListener('input', onUserCommentElementEnter);
-  userCommentElement.removeEventListener('focus', onCommentFocus);
+  scaleSmallElement.removeEventListener('click', onСontrolScaleSmallerClick);
+  scaleBigElement.removeEventListener('click', onСontrolScaleBiggerClick);
+  effectsElement.removeEventListener('change', onFilterChange);
+  closeFormElement.removeEventListener('click', closePopup);
+  commentElement.removeEventListener('input', onUserCommentElementInput);
+  commentElement.removeEventListener('focus', onCommentFocus);
   formElement.reset();
 }
 
