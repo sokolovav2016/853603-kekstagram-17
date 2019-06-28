@@ -108,7 +108,6 @@
   }
 
   function onFilterChange(evt) {
-    var FILTER_VALUE_DEFAULT = 100;
     var SLIDER_WIDTH = 453;
 
     setFilter(evt.target.value, FILTER_VALUE_DEFAULT);
