@@ -1,13 +1,13 @@
 'use strict';
 
 (function () {
+  var MAX_CHARACTERS_IN_COMMENT = 140;
+
   var editingImgElement = document.querySelector('.img-upload__overlay');
   var closeFormElement = editingImgElement.querySelector('.img-upload__cancel');
   var commentElement = document.querySelector('.text__description');
 
-  function onUserCommentElementInput(evt) {
-    var MAX_CHARACTERS_IN_COMMENT = 140;
-
+  function onCommentInput(evt) {
     if (evt.target.value.length > MAX_CHARACTERS_IN_COMMENT) {
       evt.target.setCustomValidity('Давай покороче, максимум 140 символов');
     } else {
@@ -21,12 +21,12 @@
     window.filter.setDefault();
     window.slider.setDefault();
 
-    window.scale.add();
-    window.filter.add();
-    window.slider.add();
-    window.escPress.add();
+    window.scale.addListeners();
+    window.filter.addListeners();
+    window.slider.addListeners();
+    window.escPress.addListeners();
 
-    commentElement.addEventListener('input', onUserCommentElementInput);
+    commentElement.addEventListener('input', onCommentInput);
     closeFormElement.addEventListener('click', closePopup);
   }
 
@@ -36,12 +36,12 @@
 
     editingImgElement.classList.add('hidden');
 
-    window.scale.remove();
-    window.filter.remove();
-    window.slider.remove();
-    window.escPress.remove();
+    window.scale.removeListeners();
+    window.filter.removeListeners();
+    window.slider.removeListeners();
+    window.escPress.removeListeners();
 
-    commentElement.removeEventListener('input', onUserCommentElementInput);
+    commentElement.removeEventListener('input', onCommentInput);
     closeFormElement.removeEventListener('click', closePopup);
   }
 

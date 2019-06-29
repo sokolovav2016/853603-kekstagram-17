@@ -2,6 +2,40 @@
 
 (function () {
   var FILTER_VALUE_DEFAULT = 100;
+  var SLIDER_WIDTH = 453;
+  var FILTERS = [
+    {
+      name: 'grayscale',
+      min: 0,
+      max: 1,
+      suffix: ''
+    },
+    {
+      name: 'sepia',
+      min: 0,
+      max: 1,
+      suffix: ''
+    },
+    {
+      name: 'invert',
+      min: 0,
+      max: 100,
+      suffix: '%'
+    },
+    {
+      name: 'blur',
+      min: 0,
+      max: 3,
+      suffix: 'px'
+    },
+    {
+      name: 'brightness',
+      min: 1,
+      max: 3,
+      suffix: ''
+    },
+  ];
+
   var previewImgElement = document.querySelector('.img-upload__preview').children[0];
   var effectsElement = document.querySelector('.img-upload__effects');
   var checkedFilterType = effectsElement.querySelector('input[checked]').value;
@@ -46,39 +80,6 @@
   }
 
   function setPreviewFilterStyle(type, value) {
-    var FILTERS = [
-      {
-        name: 'grayscale',
-        min: 0,
-        max: 1,
-        suffix: ''
-      },
-      {
-        name: 'sepia',
-        min: 0,
-        max: 1,
-        suffix: ''
-      },
-      {
-        name: 'invert',
-        min: 0,
-        max: 100,
-        suffix: '%'
-      },
-      {
-        name: 'blur',
-        min: 0,
-        max: 3,
-        suffix: 'px'
-      },
-      {
-        name: 'brightness',
-        min: 1,
-        max: 3,
-        suffix: ''
-      },
-    ];
-
     switch (type) {
       case 'none':
         previewImgElement.style.filter = '';
@@ -108,8 +109,6 @@
   }
 
   function onFilterChange(evt) {
-    var SLIDER_WIDTH = 453;
-
     setFilter(evt.target.value, FILTER_VALUE_DEFAULT);
     window.slider.set(SLIDER_WIDTH, FILTER_VALUE_DEFAULT);
   }
@@ -127,8 +126,8 @@
   }
 
   window.filter = {
-    add: addFilter,
-    remove: removeFilter,
+    addListeners: addFilter,
+    removeListeners: removeFilter,
     set: setFilter,
     setDefault: setFilterDefault
   };

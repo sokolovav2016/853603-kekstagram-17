@@ -30,7 +30,7 @@
   }
 
   window.escPress = {
-    add: addEscPress,
-    remove: removeEscPress
+    addListeners: addEscPress,
+    removeListeners: removeEscPress
   };
 })();

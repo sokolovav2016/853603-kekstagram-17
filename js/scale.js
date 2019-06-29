@@ -3,6 +3,7 @@
 (function () {
   var MIN_SCALE = 25;
   var MAX_SCALE = 100;
+
   var scaleSmallElement = document.querySelector('.scale__control--smaller');
   var scaleBigElement = document.querySelector('.scale__control--bigger');
   var scaleValueElement = document.querySelector('.scale__control--value');
@@ -39,7 +40,7 @@
   }
 
   window.scale = {
-    add: addScale,
-    remove: removeScale
+    addListeners: addScale,
+    removeListeners: removeScale
   };
 })();

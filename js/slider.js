@@ -1,6 +1,10 @@
 'use strict';
 
 (function () {
+  var FILTER_VALUE_DEFAULT = 100;
+  var PIN_WIDTH = 18;
+  var SLIDER_WIDTH = 453;
+
   var sliderValueElement = document.querySelector('.effect-level__value');
   var sliderControlElement = document.querySelector('.effect-level__pin');
 
@@ -24,7 +28,6 @@
     function onMouseMove(moveEvt) {
       moveEvt.preventDefault();
 
-      var PIN_WIDTH = 18;
       var sliderLineElement = document.querySelector('.effect-level__line');
       var line = sliderLineElement.getBoundingClientRect();
 
@@ -65,16 +68,14 @@
   }
 
   function setSliderDefault() {
-    var FILTER_VALUE_DEFAULT = 100;
-    var SLIDER_WIDTH = 453;
     var sliderControlDefault = SLIDER_WIDTH / FILTER_VALUE_DEFAULT * sliderValueElement.value;
 
     setSlider(sliderControlDefault, sliderValueElement.value);
   }
 
   window.slider = {
-    add: addSlider,
-    remove: removeSlider,
+    addListeners: addSlider,
+    removeListeners: removeSlider,
     set: setSlider,
     setDefault: setSliderDefault
   };
