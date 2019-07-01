@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  var PHOTO_COUNT = 25;
   var MAX_SENTENCES_IN_COMMENT = 2;
   var MAX_AVATAR_NUMBER = 6;
   var COMMENTS = [
@@ -69,6 +68,6 @@
   }
 
   window.data = {
-    get: getPhotoDescriptions(PHOTO_COUNT)
+    get: getPhotoDescriptions
   };
 })();

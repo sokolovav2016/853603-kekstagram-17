@@ -15,6 +15,22 @@
     }
   }
 
+  function onPopupEscPress(evt) {
+    window.util.isEscEvent(evt, closePopup);
+  }
+
+  function onCommentFocus() {
+    function onCommentBlur() {
+      document.addEventListener('keydown', onPopupEscPress);
+      commentElement.addEventListener('focus', onCommentFocus);
+      commentElement.removeEventListener('blur', onCommentBlur);
+    }
+
+    document.removeEventListener('keydown', onPopupEscPress);
+    commentElement.removeEventListener('focus', onCommentFocus);
+    commentElement.addEventListener('blur', onCommentBlur);
+  }
+
   function openPopup() {
     editingImgElement.classList.remove('hidden');
 
@@ -24,8 +40,9 @@
     window.scale.addListeners();
     window.filter.addListeners();
     window.slider.addListeners();
-    window.escPress.addListeners();
 
+    document.addEventListener('keydown', onPopupEscPress);
+    commentElement.addEventListener('focus', onCommentFocus);
     commentElement.addEventListener('input', onCommentInput);
     closeFormElement.addEventListener('click', closePopup);
   }
@@ -39,14 +56,14 @@
     window.scale.removeListeners();
     window.filter.removeListeners();
     window.slider.removeListeners();
-    window.escPress.removeListeners();
 
+    document.removeEventListener('keydown', onPopupEscPress);
+    commentElement.removeEventListener('focus', onCommentFocus);
     commentElement.removeEventListener('input', onCommentInput);
     closeFormElement.removeEventListener('click', closePopup);
   }
 
   window.form = {
-    open: openPopup,
-    close: closePopup
+    open: openPopup
   };
 })();
