@@ -39,6 +39,14 @@
   var previewImgElement = document.querySelector('.img-upload__preview').children[0];
   var effectsElement = document.querySelector('.img-upload__effects');
   var checkedFilterType = effectsElement.querySelector('input[checked]').value;
+  var valueToClassname = {
+    'none': 'effects__preview--none',
+    'chrome': 'effects__preview--chrome',
+    'sepia': 'effects__preview--sepia',
+    'marvin': 'effects__preview--marvin',
+    'phobos': 'effects__preview--phobos',
+    'heat': 'effects__preview--heat'
+  };
 
   function hideSlider(type) {
     var sliderElement = document.querySelector('.img-upload__effect-level');
@@ -51,26 +59,7 @@
   }
 
   function setPreviewClass(type) {
-    switch (type) {
-      case 'none':
-        previewImgElement.className = 'effects__preview--none';
-        break;
-      case 'chrome':
-        previewImgElement.className = 'effects__preview--chrome';
-        break;
-      case 'sepia':
-        previewImgElement.className = 'effects__preview--sepia';
-        break;
-      case 'marvin':
-        previewImgElement.className = 'effects__preview--marvin';
-        break;
-      case 'phobos':
-        previewImgElement.className = 'effects__preview--phobos';
-        break;
-      case 'heat':
-        previewImgElement.className = 'effects__preview--heat';
-        break;
-    }
+    previewImgElement.className = valueToClassname[type];
   }
 
   function getFilterValue(filter, value) {
