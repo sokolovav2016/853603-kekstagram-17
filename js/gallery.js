@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var imageContainerElement = document.querySelector('.pictures');
+
   function renderPhotoDescriptions(descriptionPhoto) {
     var randomUserTemplateElement = document.querySelector('#picture')
     .content
@@ -15,8 +17,12 @@
   }
 
   function renderGallery(descriptionPhotos) {
+    var pictureElements = imageContainerElement.querySelectorAll('.picture');
+    for (var j = 0; j < pictureElements.length; j++) {
+      pictureElements[j].remove();
+    }
+
     var fragment = document.createDocumentFragment();
-    var imageContainerElement = document.querySelector('.pictures');
 
     for (var i = 0; i < descriptionPhotos.length; i++) {
       fragment.appendChild(renderPhotoDescriptions(descriptionPhotos[i]));

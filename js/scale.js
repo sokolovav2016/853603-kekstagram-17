@@ -1,8 +1,10 @@
 'use strict';
 
 (function () {
-  var MIN_SCALE = 25;
-  var MAX_SCALE = 100;
+  var Scale = {
+    MIN: 25,
+    MAX: 100
+  };
 
   var scaleSmallElement = document.querySelector('.scale__control--smaller');
   var scaleBigElement = document.querySelector('.scale__control--bigger');
@@ -12,8 +14,8 @@
   function onСontrolScaleSmallerClick() {
     var value = parseInt(scaleValueElement.value, 10);
 
-    if (value > MIN_SCALE) {
-      value -= MIN_SCALE;
+    if (value > Scale.MIN) {
+      value -= Scale.MIN;
       scaleValueElement.value = value + '%';
       previewImgElement.style.transform = 'scale(' + value / 100 + ')';
     }
@@ -22,8 +24,8 @@
   function onСontrolScaleBiggerClick() {
     var value = parseInt(scaleValueElement.value, 10);
 
-    if (value < MAX_SCALE) {
-      value += MIN_SCALE;
+    if (value < Scale.MAX) {
+      value += Scale.MIN;
       scaleValueElement.value = value + '%';
       previewImgElement.style.transform = 'scale(' + value / 100 + ')';
     }
