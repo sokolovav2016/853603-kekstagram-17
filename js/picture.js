@@ -1,21 +1,18 @@
 'use strict';
 
 (function () {
-  // var imageContainerElement = document.querySelector('.pictures');
+  var pictureElement = document.querySelector('.big-picture');
+  var closePictureElement = pictureElement.querySelector('.big-picture__cancel');
 
-  function showPicture(photos) {
-    var pictureElement = document.querySelector('.big-picture');
+  function closePicture() {
+    pictureElement.classList.add('hidden');
 
-    pictureElement.classList.remove('hidden');
-    pictureElement.querySelector('.big-picture__img').children[0].src = photos[0].url;
-    pictureElement.querySelector('.likes-count').textContent = photos[0].likes;
-    pictureElement.querySelector('.comments-count').textContent = photos[0].comments.length;
-    pictureElement.querySelector('.social__caption').textContent = photos[0].description;
-    pictureElement.querySelector('.social__comment-count').classList.add('visually-hidden');
-    pictureElement.querySelector('.comments-loader').classList.add('visually-hidden');
+    closePictureElement.removeEventListener('click', closePicture);
+    document.removeEventListener('keydown', onPictureEscPress);
+  }
 
-    createsComments(photos[0].comments);
-
+  function onPictureEscPress(evt) {
+    window.util.isEscEvent(evt, closePicture);
   }
 
   function renderComment(comment) {
@@ -55,8 +52,23 @@
     commentsElement.appendChild(fragment);
   }
 
+  function showPicture(picture) {
+    pictureElement.classList.remove('hidden');
+
+    pictureElement.querySelector('.big-picture__img').children[0].src = picture.url;
+    pictureElement.querySelector('.likes-count').textContent = picture.likes;
+    pictureElement.querySelector('.comments-count').textContent = picture.comments.length;
+    pictureElement.querySelector('.social__caption').textContent = picture.description;
+    pictureElement.querySelector('.social__comment-count').classList.add('visually-hidden');
+    pictureElement.querySelector('.comments-loader').classList.add('visually-hidden');
+
+    createsComments(picture.comments);
+
+    closePictureElement.addEventListener('click', closePicture);
+    document.addEventListener('keydown', onPictureEscPress);
+  }
 
   window.picture = {
-    init: showPicture
+    show: showPicture
   };
 })();
