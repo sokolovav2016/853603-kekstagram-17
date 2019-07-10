@@ -1,8 +1,6 @@
 'use strict';
 
 (function () {
-  var imageContainerElement = document.querySelector('.pictures');
-
   function renderPhotoDescriptions(descriptionPhoto) {
     var randomUserTemplateElement = document.querySelector('#picture')
     .content
@@ -17,12 +15,13 @@
   }
 
   function renderGallery(descriptionPhotos) {
+    var imageContainerElement = document.querySelector('.pictures');
     var pictureElements = imageContainerElement.querySelectorAll('.picture');
+    var fragment = document.createDocumentFragment();
+
     for (var j = 0; j < pictureElements.length; j++) {
       pictureElements[j].remove();
     }
-
-    var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < descriptionPhotos.length; i++) {
       fragment.appendChild(renderPhotoDescriptions(descriptionPhotos[i]));

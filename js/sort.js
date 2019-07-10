@@ -57,6 +57,8 @@
     photos = data;
     updatePhotos();
     photoFilterFormElement.addEventListener('click', onFilterClick);
+
+    window.picture.init(photos);
   }
 
   window.sort = {
