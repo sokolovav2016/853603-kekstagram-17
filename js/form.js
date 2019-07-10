@@ -3,16 +3,19 @@
 (function () {
   var MAX_CHARACTERS_IN_COMMENT = 140;
 
-  var editingImgElement = document.querySelector('.img-upload__overlay');
+  var formElement = document.querySelector('.img-upload__form');
+  var editingImgElement = formElement.querySelector('.img-upload__overlay');
   var closeFormElement = editingImgElement.querySelector('.img-upload__cancel');
-  var commentElement = document.querySelector('.text__description');
-  var hashtagElement = document.querySelector('.text__hashtags');
+  var commentElement = formElement.querySelector('.text__description');
+  var hashtagElement = formElement.querySelector('.text__hashtags');
 
   function onCommentInput(evt) {
     if (evt.target.value.length > MAX_CHARACTERS_IN_COMMENT) {
       evt.target.setCustomValidity('Давай покороче, максимум 140 символов');
+      evt.target.style = 'box-shadow: 0 0 0 5px red;';
     } else {
       evt.target.setCustomValidity('');
+      evt.target.style = 'borderRadius: 5px; box-shadow: none;';
     }
   }
 
@@ -24,10 +27,18 @@
 
     if (hashtags.length > 5) {
       evt.target.setCustomValidity('максимум 5 хэш-тегов');
+      evt.target.style = 'box-shadow: 0 0 0 5px red;';
     } else {
       for (var i = 0; i < hashtags.length; i++) {
         var hashtag = hashtags[i];
-        if (hashtag[0] !== '#') {
+
+        evt.target.style = 'box-shadow: 0 0 0 5px red;';
+
+        if (evt.target.value === '') {
+          evt.target.setCustomValidity('');
+          evt.target.style = 'box-shadow: none;';
+          break;
+        } else if (hashtag[0] !== '#') {
           evt.target.setCustomValidity('Хэш-тег должен начинаться с #');
           break;
         } else if (hashtag.length < 2) {
@@ -41,6 +52,7 @@
           break;
         } else {
           evt.target.setCustomValidity('');
+          evt.target.style = 'box-shadow: none;';
         }
       }
     }
@@ -65,6 +77,7 @@
   function openPopup() {
     editingImgElement.classList.remove('hidden');
 
+    window.scale.setDefault();
     window.filter.setDefault();
     window.slider.setDefault();
 
@@ -80,11 +93,12 @@
     hashtagElement.addEventListener('focus', onElementFocus);
     hashtagElement.addEventListener('input', onHashtagInput);
 
+    formElement.addEventListener('submit', window.backend.save);
+
     closeFormElement.addEventListener('click', closePopup);
   }
 
   function closePopup() {
-    var formElement = document.querySelector('.img-upload__form');
     formElement.reset();
 
     editingImgElement.classList.add('hidden');
@@ -105,6 +119,7 @@
   }
 
   window.form = {
-    open: openPopup
+    open: openPopup,
+    close: closePopup
   };
 })();

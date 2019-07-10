@@ -41,8 +41,13 @@
     scaleBigElement.removeEventListener('click', onСontrolScaleBiggerClick);
   }
 
+  function setScaleDefault() {
+    previewImgElement.style.transform = 'scale(' + 1 + ')';
+  }
+
   window.scale = {
     addListeners: addScale,
-    removeListeners: removeScale
+    removeListeners: removeScale,
+    setDefault: setScaleDefault
   };
 })();
