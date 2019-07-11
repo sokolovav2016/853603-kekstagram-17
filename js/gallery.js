@@ -11,8 +11,6 @@
     descriptionElement.querySelector('.picture__likes').textContent = descriptionPhoto.likes;
     descriptionElement.querySelector('.picture__comments').textContent = descriptionPhoto.comments.length;
 
-    descriptionElement.addEventListener('click', window.picture.onPictureClick);
-
     descriptionElement.addEventListener('click', function () {
       window.picture.show(descriptionPhoto);
     });
