@@ -1,24 +1,24 @@
 'use strict';
 
 (function () {
-  function renderPhotoDescriptions(descriptionPhoto) {
+  function renderPhoto(photo) {
     var randomUserTemplateElement = document.querySelector('#picture')
-    .content
-    .querySelector('.picture');
-    var descriptionElement = randomUserTemplateElement.cloneNode(true);
+      .content
+      .querySelector('.picture');
+    var photoElement = randomUserTemplateElement.cloneNode(true);
 
-    descriptionElement.querySelector('.picture__img').src = descriptionPhoto.url;
-    descriptionElement.querySelector('.picture__likes').textContent = descriptionPhoto.likes;
-    descriptionElement.querySelector('.picture__comments').textContent = descriptionPhoto.comments.length;
+    photoElement.querySelector('.picture__img').src = photo.url;
+    photoElement.querySelector('.picture__likes').textContent = photo.likes;
+    photoElement.querySelector('.picture__comments').textContent = photo.comments.length;
 
-    descriptionElement.addEventListener('click', function () {
-      window.picture.show(descriptionPhoto);
+    photoElement.addEventListener('click', function () {
+      window.picture.show(photo);
     });
 
-    return descriptionElement;
+    return photoElement;
   }
 
-  function renderGallery(descriptionPhotos) {
+  function renderGallery(photos) {
     var imageContainerElement = document.querySelector('.pictures');
     var pictureElements = imageContainerElement.querySelectorAll('.picture');
     var fragment = document.createDocumentFragment();
@@ -27,8 +27,8 @@
       pictureElements[j].remove();
     }
 
-    for (var i = 0; i < descriptionPhotos.length; i++) {
-      fragment.appendChild(renderPhotoDescriptions(descriptionPhotos[i]));
+    for (var i = 0; i < photos.length; i++) {
+      fragment.appendChild(renderPhoto(photos[i]));
     }
 
     imageContainerElement.appendChild(fragment);

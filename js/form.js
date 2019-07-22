@@ -2,7 +2,6 @@
 
 (function () {
   var MAX_CHARACTERS_IN_COMMENT = 140;
-
   var formElement = document.querySelector('.img-upload__form');
   var editingImgElement = formElement.querySelector('.img-upload__overlay');
   var closeFormElement = editingImgElement.querySelector('.img-upload__cancel');
@@ -21,45 +20,48 @@
 
   function onHashtagInput(evt) {
     var hashtags = evt.target.value.split(' ')
-    .map(function (element) {
-      return element.toLowerCase();
-    });
+      .map(function (element) {
+        return element.toLowerCase();
+      });
+    var inputElement = evt.currentTarget;
 
     if (hashtags.length > 5) {
-      evt.target.setCustomValidity('максимум 5 хэш-тегов');
-      evt.target.style = 'box-shadow: 0 0 0 5px red;';
+      inputElement.setCustomValidity('нельзя указать больше пяти хэш-тегов');
+      inputElement.style = 'box-shadow: 0 0 0 5px red;';
+    } else if (inputElement.value === '') {
+      inputElement.setCustomValidity('');
+      inputElement.style = 'box-shadow: none;';
     } else {
       for (var i = 0; i < hashtags.length; i++) {
         var hashtag = hashtags[i];
 
-        evt.target.style = 'box-shadow: 0 0 0 5px red;';
+        inputElement.style = 'box-shadow: 0 0 0 5px red;';
 
-        if (evt.target.value === '') {
-          evt.target.setCustomValidity('');
-          evt.target.style = 'box-shadow: none;';
-          break;
-        } else if (hashtag[0] !== '#') {
-          evt.target.setCustomValidity('Хэш-тег должен начинаться с #');
+        if (hashtag[0] !== '#') {
+          inputElement.setCustomValidity('хэш-тег начинается с символа #');
           break;
         } else if (hashtag.length < 2) {
-          evt.target.setCustomValidity('Пустой хэш-тег');
+          inputElement.setCustomValidity('хеш-тег не может состоять только из одной решётки');
           break;
         } else if (hashtags.indexOf(hashtag) !== i) {
-          evt.target.setCustomValidity('Повторяющийся хэш-тег');
+          inputElement.setCustomValidity('один и тот же хэш-тег не может быть использован дважды');
           break;
         } else if (hashtag.length > 20) {
-          evt.target.setCustomValidity('Максимальная длина одного хэш-тега 20 символов');
+          inputElement.setCustomValidity('максимальная длина одного хэш-тега 20 символов, включая решётку');
           break;
-        } else {
-          evt.target.setCustomValidity('');
-          evt.target.style = 'box-shadow: none;';
         }
+
+        inputElement.setCustomValidity('');
+        inputElement.style = 'box-shadow: none;';
       }
     }
+
   }
 
   function onPopupEscPress(evt) {
-    window.util.isEscEvent(evt, closePopup);
+    if (window.util.isEscEvent(evt)) {
+      closePopup();
+    }
   }
 
   function onElementFocus(evt) {
@@ -72,6 +74,10 @@
     document.removeEventListener('keydown', onPopupEscPress);
     evt.target.removeEventListener('focus', onElementFocus);
     evt.target.addEventListener('blur', onElementBlur);
+  }
+
+  function onFormSubmit(evt) {
+    window.backend.save(evt);
   }
 
   function openPopup() {
@@ -93,7 +99,7 @@
     hashtagElement.addEventListener('focus', onElementFocus);
     hashtagElement.addEventListener('input', onHashtagInput);
 
-    formElement.addEventListener('submit', window.backend.save);
+    formElement.addEventListener('submit', onFormSubmit);
 
     closeFormElement.addEventListener('click', closePopup);
   }
@@ -114,6 +120,8 @@
 
     hashtagElement.removeEventListener('focus', onElementFocus);
     hashtagElement.removeEventListener('input', onHashtagInput);
+
+    formElement.removeEventListener('submit', onFormSubmit);
 
     closeFormElement.removeEventListener('click', closePopup);
   }

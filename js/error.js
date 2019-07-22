@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  function getError(errorMessage) {
+  function renderError(errorMessage) {
     if (document.body.contains(document.querySelector('.error'))) {
       document.querySelector('.error').remove();
     }
@@ -18,6 +18,6 @@
   }
 
   window.error = {
-    init: getError
+    init: renderError
   };
 })();

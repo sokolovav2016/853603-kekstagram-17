@@ -1,60 +1,63 @@
 'use strict';
 
 (function () {
-  var formElement = document.querySelector('.img-upload__form');
-
-  var successElement = document.querySelector('#success')
-  .content
-  .querySelector('.success')
-  .cloneNode(true);
-  var successCloseElements = successElement.querySelectorAll('.success__button');
-
-  var errorElement = document.querySelector('#error')
-  .content
-  .querySelector('.error')
-  .cloneNode(true);
-  var errorCloseElements = errorElement.querySelectorAll('.error__button');
-
   var Url = {
     LOAD: 'https://js.dump.academy/kekstagram/data',
     SAVE: 'https://js.dump.academy/kekstagram'
   };
+  var formElement = document.querySelector('.img-upload__form');
+  var successElement = document.querySelector('#success')
+    .content
+    .querySelector('.success')
+    .cloneNode(true);
+  var successCloseElements = successElement.querySelectorAll('.success__button');
+  var errorElement = document.querySelector('#error')
+    .content
+    .querySelector('.error')
+    .cloneNode(true);
+  var errorCloseElements = errorElement.querySelectorAll('.error__button');
 
   // --------------- MESSAGE ---------------
 
   function showMessage(messageElement, closeElements) {
     var mainElement = document.querySelector('main');
 
+    function onMessageElementEscPress(evt) {
+      if (window.util.isEscEvent(evt)) {
+        messageElement.remove();
+        document.removeEventListener('keydown', onMessageElementEscPress);
+      }
+    }
+
     mainElement.appendChild(messageElement);
 
     messageElement.addEventListener('click', function (evt) {
       if (evt.target === messageElement) {
         messageElement.remove();
+        document.removeEventListener('keydown', onMessageElementEscPress);
       }
 
       for (var i = 0; i < closeElements.length; i++) {
         if (evt.target === closeElements[i]) {
           messageElement.remove();
+          document.removeEventListener('keydown', onMessageElementEscPress);
         }
       }
-
     });
 
-    document.addEventListener('keydown', function (evt) {
-      window.util.isEscEvent(evt, messageElement.remove());
-    });
+    document.addEventListener('keydown', onMessageElementEscPress);
   }
 
   // --------------- LOAD ---------------
 
-  function backendLoad(onLoad, onError) {
+  function backendLoad(onLoad, onError, listener) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
       if (xhr.status === 200) {
         onLoad(xhr.response);
-
+        listener(xhr.response);
       } else {
         onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
       }

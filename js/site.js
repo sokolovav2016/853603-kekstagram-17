@@ -1,8 +1,12 @@
 'use strict';
 
 (function () {
-  window.backend.load(window.sort.init, window.error.init);
-
   var inputUploadElement = document.querySelector('.img-upload__input');
-  inputUploadElement.addEventListener('change', window.form.open);
+
+  function onUploadChange() {
+    window.form.open();
+  }
+
+  window.backend.load(window.gallery.render, window.error.init, window.sort.init);
+  inputUploadElement.addEventListener('change', onUploadChange);
 })();

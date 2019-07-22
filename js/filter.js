@@ -3,39 +3,38 @@
 (function () {
   var FILTER_VALUE_DEFAULT = 100;
   var SLIDER_WIDTH = 453;
-  var FILTERS = [
-    {
+  var Filters = {
+    grayscale: {
       name: 'grayscale',
       min: 0,
       max: 1,
       suffix: ''
     },
-    {
+    sepia: {
       name: 'sepia',
       min: 0,
       max: 1,
       suffix: ''
     },
-    {
+    invert: {
       name: 'invert',
       min: 0,
       max: 100,
       suffix: '%'
     },
-    {
+    blur: {
       name: 'blur',
       min: 0,
       max: 3,
       suffix: 'px'
     },
-    {
+    brightness: {
       name: 'brightness',
       min: 1,
       max: 3,
       suffix: ''
-    },
-  ];
-
+    }
+  };
   var previewImgElement = document.querySelector('.img-upload__preview').children[0];
   var effectsElement = document.querySelector('.img-upload__effects');
   var checkedFilterType = effectsElement.querySelector('input[checked]').value;
@@ -74,19 +73,19 @@
         previewImgElement.style.filter = '';
         break;
       case 'chrome':
-        previewImgElement.style.filter = getFilterValue(FILTERS[0], value);
+        previewImgElement.style.filter = getFilterValue(Filters.grayscale, value);
         break;
       case 'sepia':
-        previewImgElement.style.filter = getFilterValue(FILTERS[1], value);
+        previewImgElement.style.filter = getFilterValue(Filters.sepia, value);
         break;
       case 'marvin':
-        previewImgElement.style.filter = getFilterValue(FILTERS[2], value);
+        previewImgElement.style.filter = getFilterValue(Filters.invert, value);
         break;
       case 'phobos':
-        previewImgElement.style.filter = getFilterValue(FILTERS[3], value);
+        previewImgElement.style.filter = getFilterValue(Filters.blur, value);
         break;
       case 'heat':
-        previewImgElement.style.filter = getFilterValue(FILTERS[4], value);
+        previewImgElement.style.filter = getFilterValue(Filters.brightness, value);
         break;
     }
   }
@@ -102,11 +101,11 @@
     window.slider.set(SLIDER_WIDTH, FILTER_VALUE_DEFAULT);
   }
 
-  function addFilter() {
+  function addFilterListeners() {
     effectsElement.addEventListener('change', onFilterChange);
   }
 
-  function removeFilter() {
+  function removeFilterListeners() {
     effectsElement.removeEventListener('change', onFilterChange);
   }
 
@@ -115,8 +114,8 @@
   }
 
   window.filter = {
-    addListeners: addFilter,
-    removeListeners: removeFilter,
+    addListeners: addFilterListeners,
+    removeListeners: removeFilterListeners,
     set: setFilter,
     setDefault: setFilterDefault
   };
