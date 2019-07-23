@@ -9,4 +9,5 @@
 
   window.backend.load(window.gallery.render, window.error.init, window.sort.init);
   inputUploadElement.addEventListener('change', onUploadChange);
+  window.preview.init();
 })();
