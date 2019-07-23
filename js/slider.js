@@ -4,7 +4,6 @@
   var FILTER_VALUE_DEFAULT = 100;
   var PIN_WIDTH = 18;
   var SLIDER_WIDTH = 453;
-
   var sliderValueElement = document.querySelector('.effect-level__value');
   var sliderControlElement = document.querySelector('.effect-level__pin');
 
@@ -23,7 +22,7 @@
     evt.preventDefault();
 
     var dragElement = evt.target;
-    var startCoord = evt.clientX;
+    var startСoordinate = evt.clientX;
 
     function onMouseMove(moveEvt) {
       moveEvt.preventDefault();
@@ -32,11 +31,11 @@
       var line = sliderLineElement.getBoundingClientRect();
 
       if (moveEvt.clientX > line.left - (PIN_WIDTH / 2) && moveEvt.clientX < line.left + line.width + (PIN_WIDTH / 2)) {
-        var shift = startCoord - moveEvt.clientX;
+        var shift = startСoordinate - moveEvt.clientX;
         var parentShift = dragElement.offsetLeft - shift;
 
         if (parentShift >= 0 && parentShift <= line.width) {
-          startCoord = moveEvt.clientX;
+          startСoordinate = moveEvt.clientX;
           var value = Math.round(parentShift / line.width * 100);
 
           setSlider(parentShift, value);
@@ -59,11 +58,11 @@
     elementDrag(evt);
   }
 
-  function addSlider() {
+  function addSliderListeners() {
     sliderControlElement.addEventListener('mousedown', onPinMouseDown);
   }
 
-  function removeSlider() {
+  function removeSliderListeners() {
     sliderControlElement.removeEventListener('mousedown', onPinMouseDown);
   }
 
@@ -74,8 +73,8 @@
   }
 
   window.slider = {
-    addListeners: addSlider,
-    removeListeners: removeSlider,
+    addListeners: addSliderListeners,
+    removeListeners: removeSliderListeners,
     set: setSlider,
     setDefault: setSliderDefault
   };

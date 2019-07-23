@@ -2,12 +2,12 @@
 
 (function () {
   var ESC_KEYCODE = 27;
+  var DEBOUNCE_INTERVAL = 500;
+  var lastTimeout;
 
   window.util = {
-    isEscEvent: function (evt, action) {
-      if (evt.keyCode === ESC_KEYCODE) {
-        action();
-      }
+    isEscEvent: function (evt) {
+      return evt.keyCode === ESC_KEYCODE;
     },
 
     getRandomElement: function (arr) {
@@ -18,9 +18,12 @@
       return Math.floor(min + Math.random() * (max + 1 - min));
     },
 
-    getRandomArrayElement: function (arr) {
-      var index = window.util.getRandomIntegerInRange(0, arr.length - 1);
-      return arr[index];
+    removeDebounce: function (cb) {
+      if (lastTimeout) {
+        window.clearTimeout(lastTimeout);
+      }
+
+      lastTimeout = window.setTimeout(cb, DEBOUNCE_INTERVAL);
     }
   };
 })();

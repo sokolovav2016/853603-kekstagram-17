@@ -5,11 +5,10 @@
     MIN: 25,
     MAX: 100
   };
-
   var scaleSmallElement = document.querySelector('.scale__control--smaller');
   var scaleBigElement = document.querySelector('.scale__control--bigger');
   var scaleValueElement = document.querySelector('.scale__control--value');
-  var previewImgElement = document.querySelector('.img-upload__preview').children[0];
+  var previewImgElement = document.querySelector('.img-upload__preview img');
 
   function onСontrolScaleSmallerClick() {
     var value = parseInt(scaleValueElement.value, 10);
@@ -31,23 +30,23 @@
     }
   }
 
-  function addScale() {
+  function addScaleListeners() {
     scaleSmallElement.addEventListener('click', onСontrolScaleSmallerClick);
     scaleBigElement.addEventListener('click', onСontrolScaleBiggerClick);
   }
 
-  function removeScale() {
+  function removeScaleListeners() {
     scaleSmallElement.removeEventListener('click', onСontrolScaleSmallerClick);
     scaleBigElement.removeEventListener('click', onСontrolScaleBiggerClick);
   }
 
   function setScaleDefault() {
-    previewImgElement.style.transform = 'scale(' + 1 + ')';
+    previewImgElement.style.transform = 'scale(1)';
   }
 
   window.scale = {
-    addListeners: addScale,
-    removeListeners: removeScale,
+    addListeners: addScaleListeners,
+    removeListeners: removeScaleListeners,
     setDefault: setScaleDefault
   };
 })();
