@@ -34,9 +34,9 @@
 
     commentsLoaderElement.classList.remove('hidden');
 
-    for (var j = 0; j < commentElements.length; j++) {
-      commentElements[j].remove();
-    }
+    commentElements.forEach(function (el) {
+      el.remove();
+    });
 
     for (var i = 0; i < numberOfComments; i++) {
       if (comments[i]) {
@@ -54,7 +54,7 @@
     var closePictureElement = pictureElement.querySelector('.big-picture__cancel');
 
     function onCommentsLoaderClick() {
-      numberOfComments += 5;
+      numberOfComments += NUMBER_OF_DEFAULT_COMMENTS;
       createsComments(picture.comments, numberOfComments);
     }
 

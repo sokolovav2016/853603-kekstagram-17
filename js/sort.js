@@ -41,9 +41,10 @@
   function onFilterClick(evt) {
     var photoFilterButtonElements = document.querySelectorAll('.img-filters__button');
 
-    for (var i = 0; i < photoFilterButtonElements.length; i++) {
-      photoFilterButtonElements[i].classList.remove('img-filters__button--active');
-    }
+    photoFilterButtonElements.forEach(function (el) {
+      el.classList.remove('img-filters__button--active');
+    });
+
     evt.target.classList.add('img-filters__button--active');
 
     window.util.removeDebounce(function () {

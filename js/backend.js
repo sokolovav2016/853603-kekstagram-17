@@ -3,9 +3,12 @@
 (function () {
   var Url = {
     LOAD: 'https://js.dump.academy/kekstagram/data',
-    SAVE: 'https://js.dump.academy/kekstagram'
+    SAVE: 'https://js.dump.academy/kekstagra'
   };
-  var formElement = document.querySelector('.img-upload__form');
+  var TIMEOUT = 3000;
+  var HTTP_OK = 200;
+  var mainElement = document.querySelector('main');
+  var formElement = mainElement.querySelector('.img-upload__form');
 
   var successElement = document.querySelector('#success')
     .content
@@ -22,8 +25,6 @@
   // --------------- MESSAGE ---------------
 
   function showMessage(messageElement, closeElements) {
-    var mainElement = document.querySelector('main');
-
     function onMessageElementEscPress(evt) {
       if (window.util.isEscEvent(evt)) {
         messageElement.remove();
@@ -39,12 +40,12 @@
         document.removeEventListener('keydown', onMessageElementEscPress);
       }
 
-      for (var i = 0; i < closeElements.length; i++) {
-        if (evt.target === closeElements[i]) {
+      closeElements.forEach(function (el) {
+        if (evt.target === el) {
           messageElement.remove();
           document.removeEventListener('keydown', onMessageElementEscPress);
         }
-      }
+      });
     });
 
     document.addEventListener('keydown', onMessageElementEscPress);
@@ -57,7 +58,7 @@
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
-      if (xhr.status === 200) {
+      if (xhr.status === HTTP_OK) {
         onLoad(xhr.response);
         listener(xhr.response);
       } else {
@@ -73,7 +74,7 @@
       onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
 
-    xhr.timeout = 3000;
+    xhr.timeout = TIMEOUT;
 
     xhr.open('GET', Url.LOAD);
     xhr.send();
@@ -88,7 +89,7 @@
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
-      if (xhr.status === 200) {
+      if (xhr.status === HTTP_OK) {
         showMessage(successElement, successCloseElements);
       } else {
         showMessage(errorElement, errorCloseElements);
