@@ -42,10 +42,13 @@
     var photoFilterButtonElements = document.querySelectorAll('.img-filters__button');
 
     photoFilterButtonElements.forEach(function (el) {
-      el.classList.remove('img-filters__button--active');
+      if (el !== evt.target) {
+        el.classList.remove('img-filters__button--active');
+      } else {
+        el.classList.add('img-filters__button--active');
+      }
     });
 
-    evt.target.classList.add('img-filters__button--active');
 
     window.util.removeDebounce(function () {
       updatePhotos(evt.target.id);
