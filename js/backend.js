@@ -6,11 +6,13 @@
     SAVE: 'https://js.dump.academy/kekstagram'
   };
   var formElement = document.querySelector('.img-upload__form');
+
   var successElement = document.querySelector('#success')
     .content
     .querySelector('.success')
     .cloneNode(true);
   var successCloseElements = successElement.querySelectorAll('.success__button');
+
   var errorElement = document.querySelector('#error')
     .content
     .querySelector('.error')
@@ -87,12 +89,12 @@
 
     xhr.addEventListener('load', function () {
       if (xhr.status === 200) {
-        window.form.close();
         showMessage(successElement, successCloseElements);
       } else {
-        window.form.close();
         showMessage(errorElement, errorCloseElements);
       }
+
+      window.form.close();
     });
 
     xhr.addEventListener('error', function () {
