@@ -23,13 +23,13 @@
     var pictureElements = imageContainerElement.querySelectorAll('.picture');
     var fragment = document.createDocumentFragment();
 
-    for (var j = 0; j < pictureElements.length; j++) {
-      pictureElements[j].remove();
-    }
+    pictureElements.forEach(function (el) {
+      el.remove();
+    });
 
-    for (var i = 0; i < photos.length; i++) {
-      fragment.appendChild(renderPhoto(photos[i]));
-    }
+    photos.forEach(function (el) {
+      fragment.appendChild(renderPhoto(el));
+    });
 
     imageContainerElement.appendChild(fragment);
   }
